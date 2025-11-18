@@ -1,0 +1,81 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "tricloud_incidents",
+    "title": "TriCloud Sentinel — Incidents & Anomaly Scores",
+    "timezone": "browser",
+    "schemaVersion": 36,
+    "version": 0,
+    "refresh": "10s",
+    "panels": [
+      {
+        "type": "timeseries",
+        "title": "Anomaly Score (by agent)",
+        "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
+        "id": 1,
+        "datasource": { "type": "prometheus", "uid": null },
+        "targets": [
+          {
+            "expr": "local_anomaly_score",
+            "legendFormat": "{{agent}}",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "none",
+            "min": 0,
+            "max": 1
+          }
+        }
+      },
+      {
+        "type": "table",
+        "title": "Top Recent Incidents (by score)",
+        "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 },
+        "id": 2,
+        "datasource": { "type": "prometheus", "uid": null },
+        "targets": [
+          {
+            "expr": "topk(50, local_anomaly_score)",
+            "refId": "A",
+            "format": "table"
+          }
+        ],
+        "options": {
+          "showHeader": true
+        }
+      },
+      {
+        "type": "stat",
+        "title": "Average Anomaly Score (last 5m)",
+        "gridPos": { "x": 0, "y": 8, "w": 6, "h": 4 },
+        "id": 3,
+        "datasource": { "type": "prometheus", "uid": null },
+        "targets": [
+          {
+            "expr": "avg_over_time(local_anomaly_score[5m])",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": { "defaults": { "unit": "none", "min": 0, "max": 1 } }
+      },
+      {
+        "type": "table",
+        "title": "Agent Health (up metric)",
+        "gridPos": { "x": 6, "y": 8, "w": 18, "h": 4 },
+        "id": 4,
+        "datasource": { "type": "prometheus", "uid": null },
+        "targets": [
+          {
+            "expr": "up{job=~\"agent-.*\"}",
+            "refId": "A",
+            "format": "table"
+          }
+        ],
+        "options": { "showHeader": true }
+      }
+    ]
+  },
+  "overwrite": true
+}

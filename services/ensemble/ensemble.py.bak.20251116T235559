@@ -1,0 +1,30 @@
+from flask import Flask, request, jsonify
+from collections import defaultdict
+import time, requests
+
+app = Flask(__name__)
+ip_scores = defaultdict(list)
+
+@app.route("/ingest", methods=["POST"])
+def ingest():
+    data = request.json
+    ip = data["context"]["ip"]
+    ip_scores[ip].append((time.time(), data["score"], data["context"]))
+    ip_scores[ip] = [(t,s,c) for (t,s,c) in ip_scores[ip] if t > time.time()-60]
+    avg = sum(s for (_,s,_) in ip_scores[ip]) / max(1, len(ip_scores[ip]))
+    print(f"[ensemble] ip={ip} avg={avg:.3f} entries={len(ip_scores[ip])}")
+    if avg > 0.6 and len(ip_scores[ip]) >= 2:
+        incident = {"ip": ip, "score": avg, "evidence": ip_scores[ip]}
+        try:
+            requests.post("http://safety_gate:9100/incident", json=incident, timeout=2)
+            print("[ensemble] incident posted to safety_gate", incident)
+        except Exception as e:
+            print("Failed to post incident:", e)
+    return jsonify({"status":"ok"}), 200
+
+@app.route("/metrics", methods=["GET"])
+def metrics():
+    return "ok", 200
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=9000)

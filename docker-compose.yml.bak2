@@ -1,0 +1,67 @@
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana-oss:9.5.0
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+
+  agent1:
+    image: python:3.10-slim
+    working_dir: /app
+    volumes:
+      - ./services/agent-scorer:/app
+    command: ["python","agent.py","--name","agent-azure","--interval","1","--ensemble","http://ensemble:9000"]
+    depends_on:
+      - ensemble
+
+  agent2:
+    image: python:3.10-slim
+    working_dir: /app
+    volumes:
+      - ./services/agent-scorer:/app
+    command: ["python","agent.py","--name","agent-gcp","--interval","1","--ensemble","http://ensemble:9000"]
+    depends_on:
+      - ensemble
+
+  agent3:
+    image: python:3.10-slim
+    working_dir: /app
+    volumes:
+      - ./services/agent-scorer:/app
+    command: ["python","agent.py","--name","agent-ibm","--interval","1","--ensemble","http://ensemble:9000"]
+    depends_on:
+      - ensemble
+
+  ensemble:
+    image: python:3.10-slim
+    working_dir: /app
+    volumes:
+      - ./services/ensemble:/app
+    ports:
+      - "9000:9000"
+    command: ["python","ensemble.py"]
+    depends_on:
+      - prometheus
+
+  safety_gate:
+    image: python:3.10-slim
+    working_dir: /app
+    volumes:
+      - ./services/remediation:/app
+    ports:
+      - "9100:9100"
+    command: ["python","safety_gate.py"]
+    depends_on:
+      - ensemble

@@ -1,0 +1,9 @@
+services:
+  ensemble:
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "python3 -c 'import sys,urllib.request as u; r=u.urlopen(\"http://localhost:9000/health\"); sys.exit(0 if r.getcode()==200 else 1)'"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 10s

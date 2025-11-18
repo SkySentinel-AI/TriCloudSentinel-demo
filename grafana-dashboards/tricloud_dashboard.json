@@ -1,0 +1,40 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "tricloud-1",
+    "title": "TriCloudSentinel - Live Metrics",
+    "timezone": "browser",
+    "panels": [
+      {
+        "type": "timeseries",
+        "title": "Agent anomaly scores",
+        "gridPos": {"h": 8, "w": 24, "x": 0, "y": 0},
+        "targets": [
+          {
+            "expr": "local_anomaly_score",
+            "refId": "A"
+          }
+        ]
+      },
+      {
+        "type": "stat",
+        "title": "Avg anomaly (last 1m)",
+        "gridPos": {"h": 4, "w": 12, "x": 0, "y": 8},
+        "targets": [
+          {"expr": "avg_over_time(local_anomaly_score[1m])", "refId": "B"}
+        ]
+      },
+      {
+        "type": "stat",
+        "title": "Max anomaly (last 1m)",
+        "gridPos": {"h": 4, "w": 12, "x": 12, "y": 8},
+        "targets": [
+          {"expr": "max_over_time(local_anomaly_score[1m])", "refId": "C"}
+        ]
+      }
+    ],
+    "schemaVersion": 36,
+    "version": 1
+  },
+  "overwrite": true
+}

@@ -1,0 +1,13 @@
+FROM python:3.10-slim
+
+WORKDIR /app
+
+# copy project services (we will mount models at runtime)
+COPY services/ /app/
+
+# install runtime deps for agents + safety_gate
+RUN pip install --no-cache-dir \
+    prometheus_client flask requests scikit-learn joblib pandas shap
+
+# default command (compose overrides this)
+CMD ["sleep","infinity"]
