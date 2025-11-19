@@ -15,8 +15,7 @@ This project simulates **real-world cloud security detection pipelines**, showin
 
 # 🚀 Architecture Overview
 
-![Architecture](assets/architecture.png)  
-*(Replace this with your own image)*
+![Architecture](assets/TRICLOUDSENTINEL.1.PNG)
 
 TriCloudSentinel follows a modular detection pipeline:
 
@@ -36,8 +35,7 @@ TriCloudSentinel follows a modular detection pipeline:
 
 # 1️⃣ Detection Agents — Independent AI Scanners
 
-![Agents](assets/agents.png)  
-*(Replace this image)*
+![Agents](assets/TRICLOUDSENTINEL.2.PNG)
 
 Each agent:
 - Accepts payloads  
@@ -49,7 +47,7 @@ Each agent:
 
 # 2️⃣ Ensemble Engine — Central Intelligence
 
-![Ensemble](assets/ensemble.png)
+![Ensemble](assets/TRICLOUDSENTINEL.2.PNG)
 
 Responsible for:
 - Maintaining a **60-second sliding window**  
@@ -63,28 +61,27 @@ Responsible for:
 
 # 3️⃣ Safety Gate — Automated Remediation Layer
 
-![SafetyGate](assets/safetygate.png)
+![SafetyGate](assets/TRICLOUDSENTINEL.2.PNG)
 
 Simulated responses:
 - Azure → Block IP  
 - GCP → Block IP  
 - IBM → Block IP  
 
-> ⚠️ This is a simulation for demo purposes only.  
-> No real cloud accounts are modified.
+⚠️ *This is a simulation for demo purposes only. No real cloud accounts are modified.*
 
 ---
 
 # 4️⃣ Observability — Prometheus + Grafana Cloud
 
-![Monitoring](assets/monitoring.png)
+![Monitoring](assets/TRICLOUDSENTINEL.2.PNG)
 
 Prometheus scrapes:
 - `http://ensemble:9000/metrics`
 
 If configured, metrics are forwarded to **Grafana Cloud** using `remote_write`.
 
-### Example Prometheus config:
+### Example Prometheus remote_write config:
 
 ```yaml
 remote_write:
@@ -92,3 +89,54 @@ remote_write:
     basic_auth:
       username: <YOUR_GRAFANA_UUID>
     password_file: /etc/prometheus/secrets/grafana_api_token
+```
+
+---
+
+# 🧪 Local Setup (Quick Start)
+
+From the repository root:
+
+```bash
+# 1) Start all services
+docker compose up -d --build
+
+# 2) Check running containers
+docker compose ps
+
+# 3) Test ensemble health
+curl -i http://localhost:9000/health
+
+# 4) View Prometheus metrics
+curl -i http://localhost:9000/metrics
+```
+
+---
+
+# 📌 What This Project Demonstrates
+
+- Real-time multi-agent threat scoring  
+- Ensemble-based anomaly detection  
+- Automated remediation (simulated cloud blocking)  
+- Production-grade observability pipeline  
+- Containerized distributed microservices  
+- Integration with Grafana Cloud via `remote_write`
+
+---
+
+# ⭐ Future Enhancements  
+- Real cloud API integration (AWS/GCP/Azure)  
+- L7 threat signatures  
+- ML-based score smoothing  
+- Kafka event streaming option  
+
+---
+
+# 🏁 Author  
+**J Rishi — SkySentinel-AI**  
+*DevSecOps • Cloud Security • AI-Driven Automation*
+
+---
+
+# 🔐 Motto  
+### **Secure everything. Automate anything.**
